@@ -9,11 +9,11 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.PreDestroy;
 import java.util.List;
 
-@Component
 /**
  * Spring组件，负责启动和管理Netty服务器实例。实现CommandLineRunner接口在应用启动时初始化服务器，
  * 并在应用销毁时关闭所有服务器实例。
  */
+@Component
 public class IMServerRunner implements CommandLineRunner {
 
     @Autowired
