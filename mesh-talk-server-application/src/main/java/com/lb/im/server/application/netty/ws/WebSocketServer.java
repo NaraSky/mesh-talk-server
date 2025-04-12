@@ -1,6 +1,7 @@
 package com.lb.im.server.application.netty.ws;
 
 import com.lb.im.server.application.netty.IMNettyServer;
+import com.lb.im.server.application.netty.handler.IMChannelHandler;
 import com.lb.im.server.application.netty.ws.codec.WebSocketMessageProtocolDecoder;
 import com.lb.im.server.application.netty.ws.codec.WebSocketMessageProtocolEncoder;
 import io.netty.bootstrap.ServerBootstrap;
@@ -68,7 +69,7 @@ public class WebSocketServer implements IMNettyServer {
                         pipeline.addLast(new WebSocketServerProtocolHandler("/im"));
                         pipeline.addLast("encode", new WebSocketMessageProtocolEncoder());
                         pipeline.addLast("decode", new WebSocketMessageProtocolDecoder());
-                        pipeline.addLast("handler", null);
+                        pipeline.addLast("handler", new IMChannelHandler());
                     }
                 })
                 .option(ChannelOption.SO_BACKLOG, 5)

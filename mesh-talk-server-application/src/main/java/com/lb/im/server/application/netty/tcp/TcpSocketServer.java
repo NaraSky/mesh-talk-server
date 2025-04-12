@@ -1,6 +1,7 @@
 package com.lb.im.server.application.netty.tcp;
 
 import com.lb.im.server.application.netty.IMNettyServer;
+import com.lb.im.server.application.netty.handler.IMChannelHandler;
 import com.lb.im.server.application.netty.tcp.codec.TcpSocketMessageProtocolDecoder;
 import com.lb.im.server.application.netty.tcp.codec.TcpSocketMessageProtocolEncoder;
 import io.netty.bootstrap.ServerBootstrap;
@@ -58,7 +59,7 @@ public class TcpSocketServer implements IMNettyServer {
                          */
                         pipeline.addLast("encode", new TcpSocketMessageProtocolEncoder());
                         pipeline.addLast("decode", new TcpSocketMessageProtocolDecoder());
-                        pipeline.addLast("handler", null);
+                        pipeline.addLast("handler", new IMChannelHandler());
                     }
                 })
                 // 设置服务器Socket选项：连接队列最大长度
