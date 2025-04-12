@@ -2,8 +2,11 @@ package com.lb.im.server.application.netty.handler;
 
 import com.lb.im.common.cache.distribute.DistributedCacheService;
 import com.lb.im.common.domain.constans.IMConstants;
+import com.lb.im.common.domain.enums.IMCmdType;
 import com.lb.im.common.domain.model.IMSendInfo;
 import com.lb.im.server.application.netty.cache.UserChannelContextCache;
+import com.lb.im.server.application.netty.processor.MessageProcessor;
+import com.lb.im.server.application.netty.processor.factory.ProcessorFactory;
 import com.lb.im.server.holder.SpringContextHolder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -25,8 +28,9 @@ public class IMChannelHandler extends SimpleChannelInboundHandler<IMSendInfo> {
      * channelRead0：用于处理接收到的消息，例如登录请求或心跳消息
      */
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, IMSendInfo imSendInfo) throws Exception {
-        //TODO 处理登录和心跳消息
+    protected void channelRead0(ChannelHandlerContext ctx, IMSendInfo imSendInfo) {
+        MessageProcessor processor = ProcessorFactory.getProcessor(IMCmdType.getByCode(imSendInfo.getCmd()));
+        processor.process(ctx, processor.transForm(imSendInfo.getData()));
     }
 
     @Override

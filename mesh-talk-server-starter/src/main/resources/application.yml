@@ -1,0 +1,40 @@
+server:
+  port: 8877
+  id: 1
+
+# Redis数据库连接配置，指定主机地址、端口和数据库索引
+spring:
+  redis:
+    host: 117.72.33.162
+    port: 6379
+    database: 1
+
+# WebSocket配置，启用服务并指定端口
+websocket:
+  enable: true
+  port: 8878
+
+# TCP Socket配置（当前未启用）
+tcpsocket:
+  enable: false # 暂时不开启
+  port: 8879
+
+jwt:
+  accessToken:
+    secret: zhiyu123  # 跟im-platfrom的secret必须一致
+
+# RocketMQ消息队列配置，指定名称服务器地址和生产者组
+rocketmq:
+  name-server: 117.72.33.162:9876
+  producer:
+    group: im-server-group
+
+# 消息服务配置，指定使用的消息队列类型
+message:
+  mq:
+    type: rocketmq
+
+# 分布式缓存配置，指定使用Redis作为缓存实现
+distributed:
+  cache:
+    type: redis
