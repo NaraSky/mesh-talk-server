@@ -70,7 +70,7 @@ public class LoginProcessor implements MessageProcessor<IMLoginInfo> {
             // 强制下线已有连接
             IMSendInfo<String> imSendInfo = new IMSendInfo<>(IMCmdType.FORCE_LOGOUT.getCode(), "您已在其他地方登录，将被强制下线");
             channelCtx.channel().writeAndFlush(imSendInfo);
-            logger.info("异地登录，强制下线，userid:{}", userId);
+            logger.info("LoginProcessor.process|异地登录，强制下线，userid:{}", userId);
         }
 
         // 注册当前通道到缓存
