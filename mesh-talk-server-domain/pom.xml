@@ -21,7 +21,16 @@
     </properties>
 
     <dependencies>
-
+        <dependency>
+            <groupId>com.lb</groupId>
+            <artifactId>mesh-talk-common-cache</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.lb</groupId>
+            <artifactId>mesh-talk-common-mq</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

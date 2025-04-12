@@ -1,6 +1,8 @@
 package com.lb.im.server.application.netty.tcp;
 
 import com.lb.im.server.application.netty.IMNettyServer;
+import com.lb.im.server.application.netty.tcp.codec.TcpSocketMessageProtocolDecoder;
+import com.lb.im.server.application.netty.tcp.codec.TcpSocketMessageProtocolEncoder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -50,10 +52,12 @@ public class TcpSocketServer implements IMNettyServer {
                         ChannelPipeline pipeline = channel.pipeline();
                         // 添加空闲状态处理器，检测读空闲超时（120秒）
                         pipeline.addLast(new IdleStateHandler(120, 0, 0, TimeUnit.SECONDS));
-                        // 添加编解码处理器（当前占位符，需替换为实际处理器）
-                        pipeline.addLast("encode", null);
-                        // 添加业务处理handler（当前占位符，需替换为实际处理器）
-                        pipeline.addLast("decode", null);
+                        /*
+                         * 添加编解码处理器到ChannelPipeline中。当前使用TcpSocketMessageProtocolEncoder作为编码器，
+                         * TcpSocketMessageProtocolDecoder作为解码器。这两个处理器负责网络消息的序列化与反序列化，
+                         */
+                        pipeline.addLast("encode", new TcpSocketMessageProtocolEncoder());
+                        pipeline.addLast("decode", new TcpSocketMessageProtocolDecoder());
                         pipeline.addLast("handler", null);
                     }
                 })

@@ -1,6 +1,8 @@
 package com.lb.im.server.application.netty.ws;
 
 import com.lb.im.server.application.netty.IMNettyServer;
+import com.lb.im.server.application.netty.ws.codec.WebSocketMessageProtocolDecoder;
+import com.lb.im.server.application.netty.ws.codec.WebSocketMessageProtocolEncoder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -64,8 +66,8 @@ public class WebSocketServer implements IMNettyServer {
                         pipeline.addLast("aggregator", new HttpObjectAggregator(65535));
                         pipeline.addLast("http-chunked", new ChunkedWriteHandler());
                         pipeline.addLast(new WebSocketServerProtocolHandler("/im"));
-                        pipeline.addLast("encode", null);
-                        pipeline.addLast("decode", null);
+                        pipeline.addLast("encode", new WebSocketMessageProtocolEncoder());
+                        pipeline.addLast("decode", new WebSocketMessageProtocolDecoder());
                         pipeline.addLast("handler", null);
                     }
                 })
