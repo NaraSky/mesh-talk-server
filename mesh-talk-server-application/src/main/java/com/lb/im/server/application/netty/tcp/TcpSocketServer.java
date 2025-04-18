@@ -18,9 +18,8 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.TimeUnit;
 
 @Component
-@ConditionalOnProperty(prefix = "tcpsocket", name = "enable", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "tcpsocket", value = "enable", havingValue = "true", matchIfMissing = true)
 public class TcpSocketServer implements IMNettyServer {
-
     private final Logger logger = LoggerFactory.getLogger(TcpSocketServer.class);
 
     private volatile boolean ready = false;
@@ -29,50 +28,36 @@ public class TcpSocketServer implements IMNettyServer {
     private int port;
 
     private EventLoopGroup bossGroup;
-    private EventLoopGroup workerGroup;
+    private EventLoopGroup workGroup;
 
     @Override
     public boolean isReady() {
         return ready;
     }
 
-    /**
-     * 启动TCP服务器，初始化线程组并绑定监听端口。
-     * 配置通道处理器和连接选项，设置空闲状态检测。
-     */
     @Override
     public void start() {
         ServerBootstrap bootstrap = new ServerBootstrap();
         bossGroup = new NioEventLoopGroup();
-        workerGroup = new NioEventLoopGroup();
-        bootstrap.group(bossGroup, workerGroup)
+        workGroup = new NioEventLoopGroup();
+        bootstrap.group(bossGroup, workGroup)
                 .channel(NioServerSocketChannel.class)
                 .childHandler(new ChannelInitializer<Channel>() {
                     @Override
-                    protected void initChannel(Channel channel) throws Exception {
-                        ChannelPipeline pipeline = channel.pipeline();
-                        // 添加空闲状态处理器，检测读空闲超时（120秒）
+                    protected void initChannel(Channel ch) throws Exception {
+                        ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast(new IdleStateHandler(120, 0, 0, TimeUnit.SECONDS));
-                        /*
-                         * 添加编解码处理器到ChannelPipeline中。当前使用TcpSocketMessageProtocolEncoder作为编码器，
-                         * TcpSocketMessageProtocolDecoder作为解码器。这两个处理器负责网络消息的序列化与反序列化，
-                         */
                         pipeline.addLast("encode", new TcpSocketMessageProtocolEncoder());
                         pipeline.addLast("decode", new TcpSocketMessageProtocolDecoder());
                         pipeline.addLast("handler", new IMChannelHandler());
                     }
-                })
-                // 设置服务器Socket选项：连接队列最大长度
-                .option(ChannelOption.SO_BACKLOG, 5)
-                // 设置客户端连接保持活动
+                }).option(ChannelOption.SO_BACKLOG, 5)
                 .childOption(ChannelOption.SO_KEEPALIVE, true);
         try {
-            // 绑定端口并等待启动完成
             bootstrap.bind(port).sync().channel();
             this.ready = true;
             logger.info("TcpSocketServer.start|服务启动正常,监听端口:{}", port);
         } catch (InterruptedException e) {
-            // 捕获启动异常并记录
             logger.error("TcpSocketServer.start|服务启动异常:{}", e.getMessage());
         }
     }
@@ -82,10 +67,10 @@ public class TcpSocketServer implements IMNettyServer {
         if (bossGroup != null && !bossGroup.isShuttingDown() && !bossGroup.isShutdown()) {
             bossGroup.shutdownGracefully();
         }
-        if (workerGroup != null && !workerGroup.isShuttingDown() && !workerGroup.isShutdown()) {
-            workerGroup.shutdownGracefully();
+        if (workGroup != null && !workGroup.isShuttingDown() && !workGroup.isShutdown()) {
+            workGroup.shutdownGracefully();
         }
-        ready = false;
-        logger.info("TcpSocketServer shutdown");
+        this.ready = false;
+        logger.info("TcpSocketServer.shutdown|服务停止");
     }
 }

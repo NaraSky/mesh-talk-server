@@ -1,40 +1,70 @@
+# 服务器配置，定义应用的基本网络参数和标识
 server:
   port: 8877
   id: 1
 
-# Redis数据库连接配置，指定主机地址、端口和数据库索引
+# Spring框架配置，主要包含Redis连接参数和客户端配置
 spring:
   redis:
+    database: 0
     host: 117.72.33.162
-    port: 6379
-    database: 1
+    port: 16379
+    password:
+    timeout: 30000
+    lettuce:
+      pool:
+        enabled: true
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: 5000
+    address: redis://117.72.33.162:16379
 
-# WebSocket配置，启用服务并指定端口
+# WebSocket配置，启用状态及端口设置
 websocket:
   enable: true
   port: 8878
 
-# TCP Socket配置（当前未启用）
+# TCP Socket配置，当前未启用
 tcpsocket:
   enable: false # 暂时不开启
   port: 8879
 
+# 心跳机制配置，定义心跳计数阈值
+heartbeat:
+  count: 10
+
+# JWT访问令牌配置，指定加密密钥
 jwt:
   accessToken:
-    secret: zhiyu123  # 跟im-platfrom的secret必须一致
+    secret: zhiyu120
 
-# RocketMQ消息队列配置，指定名称服务器地址和生产者组
+# RocketMQ配置，设置名称服务器地址和生产者组
 rocketmq:
   name-server: 117.72.33.162:9876
   producer:
     group: im-server-group
 
-# 消息服务配置，指定使用的消息队列类型
-message:
-  mq:
-    type: rocketmq
+# 本地缓存配置，指定缓存实现类型
+local:
+  cache:
+    type: guava
 
-# 分布式缓存配置，指定使用Redis作为缓存实现
-distributed:
+# 分布式缓存与锁配置，使用Redisson实现
+distribute:
   cache:
     type: redis
+  lock:
+    type: redisson
+
+# Redis部署模式配置，支持单实例或集群模式
+redis:
+  arrange:
+    type: single # single or cluster
+
+# 消息队列配置，指定消息类型及事件处理方式
+message:
+  mq:
+    event:
+      type: rocketmq
+    type: rocketmq

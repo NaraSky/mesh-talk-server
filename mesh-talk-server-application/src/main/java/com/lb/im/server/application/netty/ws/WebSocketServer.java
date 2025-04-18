@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 @Component
 @ConditionalOnProperty(prefix = "websocket", value = "enable", havingValue = "true", matchIfMissing = true)
 public class WebSocketServer implements IMNettyServer {
-
     private final Logger logger = LoggerFactory.getLogger(WebSocketServer.class);
 
     private volatile boolean ready = false;
@@ -40,27 +39,18 @@ public class WebSocketServer implements IMNettyServer {
         return ready;
     }
 
-    /**
-     * 启动WebSocket服务器，绑定到指定端口并初始化Netty线程组及处理管道。
-     * <p>
-     * 该方法执行以下操作：
-     * 1. 创建Boss和Worker线程组处理网络事件。
-     * 2. 配置ChannelInitializer设置消息编解码、协议处理及业务处理器。
-     * 3. 绑定服务器到指定端口并等待启动完成。
-     */
     @Override
     public void start() {
         ServerBootstrap bootstrap = new ServerBootstrap();
         bossGroup = new NioEventLoopGroup();
         workGroup = new NioEventLoopGroup();
-
-        // 配置Netty服务器参数，包括线程组、通道类型、处理管道及TCP选项
         bootstrap.group(bossGroup, workGroup)
                 .channel(NioServerSocketChannel.class)
                 .childHandler(new ChannelInitializer<Channel>() {
                     // 添加处理的Handler，通常包括消息编解码、业务处理，也可以是日志、权限、过滤等
                     @Override
                     protected void initChannel(Channel ch) {
+                        // 获取职责链
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast(new IdleStateHandler(120, 0, 0, TimeUnit.SECONDS));
                         pipeline.addLast("http-codec", new HttpServerCodec());
@@ -75,7 +65,6 @@ public class WebSocketServer implements IMNettyServer {
                 .option(ChannelOption.SO_BACKLOG, 5)
                 .childOption(ChannelOption.SO_KEEPALIVE, true);
 
-        // 绑定服务器到指定端口并处理启动异常
         try {
             bootstrap.bind(port).sync().channel();
             this.ready = true;

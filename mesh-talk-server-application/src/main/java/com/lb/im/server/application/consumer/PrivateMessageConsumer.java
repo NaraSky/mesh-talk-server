@@ -1,4 +1,4 @@
-package com.lb.im.server.application.netty.consumer;
+package com.lb.im.server.application.consumer;
 
 import cn.hutool.core.util.StrUtil;
 import com.lb.im.common.domain.constans.IMConstants;
@@ -23,8 +23,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ConditionalOnProperty(name = "message.mq.type", havingValue = "rocketmq")
 @RocketMQMessageListener(consumerGroup = IMConstants.IM_MESSAGE_PRIVATE_CONSUMER_GROUP, topic = IMConstants.IM_MESSAGE_PRIVATE_NULL_QUEUE)
-public class PrivateMessageConsumer
-        extends BaseMessageConsumer implements RocketMQListener<String>, RocketMQPushConsumerLifecycleListener {
+public class PrivateMessageConsumer extends BaseMessageConsumer implements RocketMQListener<String>, RocketMQPushConsumerLifecycleListener {
 
     private final Logger logger = LoggerFactory.getLogger(PrivateMessageConsumer.class);
 
@@ -51,7 +50,7 @@ public class PrivateMessageConsumer
     @Override
     public void prepareStart(DefaultMQPushConsumer consumer) {
         try {
-            // 拼接实际订阅的topic名称（格式：基础topic_服务器ID）
+            // 拼接实际订阅的topic名称（格式：im_message_private_serverId）
             String topic = String.join(IMConstants.MESSAGE_KEY_SPLIT, IMConstants.IM_MESSAGE_PRIVATE_QUEUE, String.valueOf(serverId));
             consumer.subscribe(topic, "*");
         } catch (Exception e) {

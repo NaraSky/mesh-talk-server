@@ -1,4 +1,4 @@
-package com.lb.im.server.application.netty.consumer;
+package com.lb.im.server.application.consumer;
 
 import cn.hutool.core.util.StrUtil;
 import com.lb.im.common.domain.constans.IMConstants;
@@ -62,6 +62,7 @@ public class GroupMessageConsumer extends BaseMessageConsumer implements RocketM
     public void prepareStart(DefaultMQPushConsumer consumer) {
         // 动态生成订阅主题名称，格式为常量与服务器ID拼接
         try {
+            // 拼接实际订阅的topic名称（格式：im_message_group_serverId）
             String topic = String.join(IMConstants.MESSAGE_KEY_SPLIT, IMConstants.IM_MESSAGE_GROUP_QUEUE, String.valueOf(serverId));
             consumer.subscribe(topic, "*");
         } catch (Exception e) {
