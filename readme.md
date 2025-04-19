@@ -260,6 +260,6 @@ We welcome all forms of contributions, whether it's new features, bug fixes, or 
 ---
 
 <div align="center">
-  <p>如果您觉得这个项目有用，请给它一个 ⭐️！</p>
-  <p>有问题或建议？请<a href="https://github.com/NaraSky/mesh-talk-server/issues">提交 Issue</a></p>
+  <p>If you find this project useful, please give it a ⭐️!</p>
+  <p>Questions or suggestions? Please <a href="https://github.com/NaraSky/mesh-talk-server/issues">submit an Issue</a></p>
 </div>
